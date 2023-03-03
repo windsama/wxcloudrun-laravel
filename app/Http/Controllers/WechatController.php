@@ -27,7 +27,8 @@ class WechatController extends Controller
     public function notice()
     {
         if (!$this->checkSignature()) {
-            echo 'error';
+            $this->runLog('error 1');
+            echo 'error 1';
             exit;
         }
 
@@ -37,18 +38,34 @@ class WechatController extends Controller
             exit;
         }
 
+
+        if (empty($GLOBALS["HTTP_RAW_POST_DATA"])) {
+            $this->runLog('error 2');
+            echo 'error 2';
+            exit;
+        }
+
+        $postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
+        $this->runLog($postStr);
+
+        $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
+
+        echo 'success';
+    }
+
+    private function runLog($msg)
+    {
         DB::table('logs')->insert([
-            'data' => json_encode([
-                'globals' => $GLOBALS,
-                'request' => $_REQUEST,
-                'get' => $_GET,
-                'post' => $_POST
-            ]),
+            'data' => $msg,
+//            'data' => json_encode([
+//                'globals' => $GLOBALS,
+//                'request' => $_REQUEST,
+//                'get' => $_GET,
+//                'post' => $_POST
+//            ]),
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
-
-        echo 'success';
     }
 
     private function checkSignature()
