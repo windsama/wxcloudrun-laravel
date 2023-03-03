@@ -49,12 +49,35 @@ class WechatController extends Controller
         $this->runLog($postStr);
 
         $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
+        $msgType = trim($postObj->MsgType);
+        $openId = trim($postObj->FromUserName);
 
-        echo 'success';
+        switch ($msgType) {
+            case "test":
+                if ($postObj->Content == 'myid') {
+                    $resultStr = $this->responseText($postObj, $openId);
+                } else {
+                    $resultStr = '';
+                }
+
+                break;
+            case "event":
+                $event = trim($postObj->Event);
+                $resultStr = "event: " . $event;
+
+                break;
+            default:
+                $resultStr = "Unknow msg type: " . $msgType;
+                break;
+        }
+
+        echo !empty($resultStr) ? $resultStr : '';
     }
 
     private function runLog($msg)
     {
+        error_log($msg . PHP_EOL, 3, '111');
+
         DB::table('logs')->insert([
             'data' => $msg,
 //            'data' => json_encode([
