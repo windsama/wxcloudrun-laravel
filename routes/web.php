@@ -25,4 +25,4 @@ Route::get('/api/count', 'CounterController@getCount');
 Route::post('/api/count', 'CounterController@updateCount');
 
 
-Route::any('/api/notice', 'WechatController@notice');
+Route::get('/api/notice', 'WechatController@notice');
