@@ -27,7 +27,7 @@ class WechatController extends Controller
     public function notice()
     {
         if (!$this->checkSignature()) {
-            echo '';
+            echo 'error';
             exit;
         }
 
@@ -47,6 +47,8 @@ class WechatController extends Controller
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
+
+        echo 'success';
     }
 
     private function checkSignature()
